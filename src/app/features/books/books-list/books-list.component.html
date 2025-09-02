@@ -1,0 +1,176 @@
+
+
+<div class="books-container">
+  <div class="books-header">
+    <div class="header-content">
+      <h1>Livros</h1>
+      <p>Gerencie sua biblioteca de livros</p>
+    </div>
+    <button class="add-btn" routerLink="create">+ Adicionar Livro</button>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="search-filters">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Buscar livros por título, descrição ou ISBN..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange($event)"
+        class="search-input">
+      <button 
+        *ngIf="searchTerm" 
+        (click)="clearFilters()" 
+        class="clear-search-btn"
+        title="Limpar filtros">
+        ✕
+      </button>
+    </div>
+    
+    <div class="filter-group">
+      <label for="authorFilter">Autor:</label>
+      <select 
+        id="authorFilter" 
+        [(ngModel)]="selectedAuthorId" 
+        (change)="onAuthorFilterChange(selectedAuthorId)"
+        class="filter-select">
+        <option [value]="null">Todos os autores</option>
+        <option *ngFor="let author of authors" [value]="author.id">
+          {{ author.name }}
+        </option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="genreFilter">Gênero:</label>
+      <select 
+        id="genreFilter" 
+        [(ngModel)]="selectedGenreId" 
+        (change)="onGenreFilterChange(selectedGenreId)"
+        class="filter-select">
+        <option [value]="null">Todos os gêneros</option>
+        <option *ngFor="let genre of genres" [value]="genre.id">
+          {{ genre.name }}
+        </option>
+      </select>
+    </div>
+    
+    <div class="page-size-selector">
+      <label for="pageSize">Itens por página:</label>
+      <select 
+        id="pageSize" 
+        [(ngModel)]="pageSize" 
+        (change)="onPageSizeChange(pageSize)"
+        class="page-size-select">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="books-content">
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      <span class="error-icon">⚠️</span>
+      <span>{{ error }}</span>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <div class="spinner">⏳</div>
+      <p>Carregando livros...</p>
+    </div>
+
+    <div *ngIf="!loading" class="table-container">
+      <table class="books-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Gênero</th>
+            <th>Criado em</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let book of books" class="book-row">
+            <td class="book-id">#{{ book.id }}</td>
+            <td class="book-title">{{ book.title }}</td>
+            <td class="book-author">{{ book.authorName }}</td>
+            <td class="book-genre">{{ book.genreName }}</td>
+            <td class="book-created">{{ formatDate(book.createdAt) }}</td>
+            <td class="book-actions">
+              <button class="edit-btn" [routerLink]="['edit', book.id]" title="Editar livro">
+                <span class="icon">✏️</span>
+                <span class="text">Editar</span>
+              </button>
+              <button class="delete-btn" (click)="deleteBook(book)" title="Excluir livro">
+                <span class="icon">🗑️</span>
+                <span class="text">Excluir</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="books.length === 0 && !loading && !error" class="empty-state">
+        <div class="empty-icon">📚</div>
+        <h3>Nenhum livro encontrado</h3>
+        <p>Comece adicionando seu primeiro livro à biblioteca</p>
+        <button class="add-btn" routerLink="create">Adicionar Primeiro Livro</button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="pagination && !loading" class="pagination">
+      <div class="pagination-info">
+        <span class="results-count">
+          Mostrando {{ (pagination.number * pagination.size) + 1 }} - 
+          {{ (pagination.number + 1) * pagination.size > pagination.totalElements ? pagination.totalElements : (pagination.number + 1) * pagination.size }} 
+          de {{ pagination.totalElements }} livros
+        </span>
+      </div>
+      
+      <div class="pagination-controls">
+        <button 
+          class="page-btn first-page" 
+          [disabled]="pagination.first"
+          (click)="onPageChange(0)"
+          title="Primeira página">
+          <span class="icon">⏮</span>
+        </button>
+        
+        <button 
+          class="page-btn prev-page" 
+          [disabled]="pagination.first"
+          (click)="onPageChange(pagination.number - 1)"
+          title="Página anterior">
+          <span class="icon">◀</span>
+        </button>
+        
+        <span class="page-info">
+          {{ pagination.number + 1 }} / {{ pagination.totalPages }}
+        </span>
+        
+        <button 
+          class="page-btn next-page" 
+          [disabled]="pagination.last"
+          (click)="onPageChange(pagination.number + 1)"
+          title="Próxima página">
+          <span class="icon">▶</span>
+        </button>
+        
+        <button 
+          class="page-btn last-page" 
+          [disabled]="pagination.last"
+          (click)="onPageChange(pagination.totalPages - 1)"
+          title="Última página">
+          <span class="icon">⏭</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

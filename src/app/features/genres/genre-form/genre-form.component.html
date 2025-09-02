@@ -1,0 +1,48 @@
+<div class="genre-form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Editar Gênero' : 'Novo Gênero' }}</h1>
+    <p>{{ isEditMode ? 'Atualize as informações do gênero' : 'Preencha os dados do novo gênero' }}</p>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="genreForm" (ngSubmit)="onSubmit()" class="genre-form">
+      <div class="form-field">
+        <label for="name">Nome do Gênero</label>
+        <input 
+          id="name"
+          type="text" 
+          formControlName="name" 
+          placeholder="Digite o nome do gênero"
+          [class.error]="genreForm.get('name')?.invalid && genreForm.get('name')?.touched">
+        <div class="field-error" *ngIf="genreForm.get('name')?.invalid && genreForm.get('name')?.touched">
+          {{ getErrorMessage('name') }}
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="error">
+        <span class="error-icon">⚠️</span>
+        <span>{{ error }}</span>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="cancel-btn" 
+          (click)="onCancel()">
+          Cancelar
+        </button>
+        
+        <button 
+          type="submit" 
+          class="submit-btn" 
+          [disabled]="genreForm.invalid || loading"
+          [class.loading]="loading">
+          <span *ngIf="loading" class="spinner">⏳</span>
+          <span *ngIf="!loading">
+            {{ isEditMode ? 'Atualizar' : 'Criar' }}
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,93 @@
+<div class="book-form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Editar Livro' : 'Novo Livro' }}</h1>
+    <p>{{ isEditMode ? 'Atualize as informações do livro' : 'Preencha os dados do novo livro' }}</p>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="bookForm" (ngSubmit)="onSubmit()" class="book-form">
+      <div class="form-field">
+        <label for="title">Título do Livro</label>
+        <input 
+          id="title"
+          type="text" 
+          formControlName="title" 
+          placeholder="Digite o título do livro"
+          [class.error]="bookForm.get('title')?.invalid && bookForm.get('title')?.touched">
+        <div class="field-error" *ngIf="bookForm.get('title')?.invalid && bookForm.get('title')?.touched">
+          {{ getErrorMessage('title') }}
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="publicationYear">Ano de Publicação</label>
+        <input 
+          id="publicationYear"
+          type="number" 
+          formControlName="publicationYear" 
+          placeholder="Digite o ano de publicação"
+          [class.error]="bookForm.get('publicationYear')?.invalid && bookForm.get('publicationYear')?.touched">
+        <div class="field-error" *ngIf="bookForm.get('publicationYear')?.invalid && bookForm.get('publicationYear')?.touched">
+          {{ getErrorMessage('publicationYear') }}
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="authorId">Autor</label>
+        <select 
+          id="authorId"
+          formControlName="authorId" 
+          [class.error]="bookForm.get('authorId')?.invalid && bookForm.get('authorId')?.touched">
+          <option value="">Selecione um autor</option>
+          <option *ngFor="let author of authors" [value]="author.id">
+            {{ author.name }}
+          </option>
+        </select>
+        <div class="field-error" *ngIf="bookForm.get('authorId')?.invalid && bookForm.get('authorId')?.touched">
+          {{ getErrorMessage('authorId') }}
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="genreId">Gênero</label>
+        <select 
+          id="genreId"
+          formControlName="genreId" 
+          [class.error]="bookForm.get('genreId')?.invalid && bookForm.get('genreId')?.touched">
+          <option value="">Selecione um gênero</option>
+          <option *ngFor="let genre of genres" [value]="genre.id">
+            {{ genre.name }}
+          </option>
+        </select>
+        <div class="field-error" *ngIf="bookForm.get('genreId')?.invalid && bookForm.get('genreId')?.touched">
+          {{ getErrorMessage('genreId') }}
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="error">
+        <span class="error-icon">⚠️</span>
+        <span>{{ error }}</span>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="cancel-btn" 
+          (click)="onCancel()">
+          Cancelar
+        </button>
+        
+        <button 
+          type="submit" 
+          class="submit-btn" 
+          [disabled]="bookForm.invalid || loading"
+          [class.loading]="loading">
+          <span *ngIf="loading" class="spinner">⏳</span>
+          <span *ngIf="!loading">
+            {{ isEditMode ? 'Atualizar' : 'Criar' }}
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

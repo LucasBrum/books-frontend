@@ -1,0 +1,140 @@
+
+
+<div class="authors-container">
+  <div class="authors-header">
+    <div class="header-content">
+      <h1>Autores</h1>
+      <p>Gerencie os autores da sua biblioteca</p>
+    </div>
+    <button class="add-btn" routerLink="create">+ Adicionar Autor</button>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="search-filters">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Buscar autores por nome..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange($event)"
+        class="search-input">
+      <button 
+        *ngIf="searchTerm" 
+        (click)="clearSearch()" 
+        class="clear-search-btn"
+        title="Limpar busca">
+        ✕
+      </button>
+    </div>
+    
+    <div class="page-size-selector">
+      <label for="pageSize">Itens por página:</label>
+      <select 
+        id="pageSize" 
+        [(ngModel)]="pageSize" 
+        (change)="onPageSizeChange(pageSize)"
+        class="page-size-select">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="authors-content">
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      <span class="error-icon">⚠️</span>
+      <span>{{ error }}</span>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <div class="spinner">⏳</div>
+      <p>Carregando autores...</p>
+    </div>
+
+    <div *ngIf="!loading" class="table-container">
+      <table class="authors-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let author of authors" class="author-row">
+            <td class="author-id">#{{ author.id }}</td>
+            <td class="author-name">{{ author.name }}</td>
+            <td class="author-actions">
+              <button class="edit-btn" [routerLink]="['edit', author.id]" title="Editar autor">
+                <span class="icon">✏️</span>
+                <span class="text">Editar</span>
+              </button>
+              <button class="delete-btn" (click)="deleteAuthor(author)" title="Excluir autor">
+                <span class="icon">🗑️</span>
+                <span class="text">Excluir</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="authors.length === 0 && !loading && !error" class="empty-state">
+        <div class="empty-icon">✍️</div>
+        <h3>Nenhum autor encontrado</h3>
+        <p>Comece adicionando seu primeiro autor à biblioteca</p>
+        <button class="add-btn" routerLink="create">Adicionar Primeiro Autor</button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="pagination && !loading" class="pagination">
+      <div class="pagination-info">
+        <span class="results-count">
+          Mostrando {{ (pagination.number * pagination.size) + 1 }} - 
+          {{ (pagination.number + 1) * pagination.size > pagination.totalElements ? pagination.totalElements : (pagination.number + 1) * pagination.size }} 
+          de {{ pagination.totalElements }} autores
+        </span>
+      </div>
+      
+      <div class="pagination-controls">
+        <button 
+          class="page-btn first-page" 
+          [disabled]="pagination.first"
+          (click)="onPageChange(0)"
+          title="Primeira página">
+          <span class="icon">⏮</span>
+        </button>
+        
+        <button 
+          class="page-btn prev-page" 
+          [disabled]="pagination.first"
+          (click)="onPageChange(pagination.number - 1)"
+          title="Página anterior">
+          <span class="icon">◀</span>
+        </button>
+        
+        <span class="page-info">
+          {{ pagination.number + 1 }} / {{ pagination.totalPages }}
+        </span>
+        
+        <button 
+          class="page-btn next-page" 
+          [disabled]="pagination.last"
+          (click)="onPageChange(pagination.number + 1)"
+          title="Próxima página">
+          <span class="icon">▶</span>
+        </button>
+        
+        <button 
+          class="page-btn last-page" 
+          [disabled]="pagination.last"
+          (click)="onPageChange(pagination.totalPages - 1)"
+          title="Última página">
+          <span class="icon">⏭</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

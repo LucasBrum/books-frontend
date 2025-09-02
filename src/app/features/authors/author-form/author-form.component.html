@@ -1,0 +1,48 @@
+<div class="author-form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Editar Autor' : 'Novo Autor' }}</h1>
+    <p>{{ isEditMode ? 'Atualize as informações do autor' : 'Preencha os dados do novo autor' }}</p>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="authorForm" (ngSubmit)="onSubmit()" class="author-form">
+      <div class="form-field">
+        <label for="name">Nome do Autor</label>
+        <input 
+          id="name"
+          type="text" 
+          formControlName="name" 
+          placeholder="Digite o nome do autor"
+          [class.error]="authorForm.get('name')?.invalid && authorForm.get('name')?.touched">
+        <div class="field-error" *ngIf="authorForm.get('name')?.invalid && authorForm.get('name')?.touched">
+          {{ getErrorMessage('name') }}
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="error">
+        <span class="error-icon">⚠️</span>
+        <span>{{ error }}</span>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="cancel-btn" 
+          (click)="onCancel()">
+          Cancelar
+        </button>
+        
+        <button 
+          type="submit" 
+          class="submit-btn" 
+          [disabled]="authorForm.invalid || loading"
+          [class.loading]="loading">
+          <span *ngIf="loading" class="spinner">⏳</span>
+          <span *ngIf="!loading">
+            {{ isEditMode ? 'Atualizar' : 'Criar' }}
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

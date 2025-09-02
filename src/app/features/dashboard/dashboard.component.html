@@ -1,0 +1,39 @@
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p>Bem-vindo ao sistema de gerenciamento de livros</p>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">{{ (booksPagination$ | async)?.totalElements || 0 }}</div>
+      <div class="stat-label">Livros</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-number">{{ (authorsPagination$ | async)?.totalElements || 0 }}</div>
+      <div class="stat-label">Autores</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-number">{{ (genresPagination$ | async)?.totalElements || 0 }}</div>
+      <div class="stat-label">Gêneros</div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="actions-section">
+    <h2>Ações Rápidas</h2>
+    
+    <div class="actions-grid">
+      <a *ngFor="let card of dashboardCards" 
+         [routerLink]="card.route"
+         class="action-card">
+        <div class="action-title">{{ card.title }}</div>
+        <div class="action-description">{{ card.description }}</div>
+        <div class="action-arrow">→</div>
+      </a>
+    </div>
+  </div>
+</div>

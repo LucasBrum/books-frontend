@@ -1,0 +1,126 @@
+
+
+<div class="genres-container">
+  <div class="genres-header">
+    <div class="header-content">
+      <h1>Gêneros</h1>
+      <p>Gerencie os gêneros da sua biblioteca</p>
+    </div>
+    <button class="add-btn" routerLink="create">+ Adicionar Gênero</button>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="search-filters">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Buscar gêneros por nome..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange($event)"
+        class="search-input">
+      <button 
+        *ngIf="searchTerm" 
+        (click)="clearSearch()" 
+        class="clear-search-btn"
+        title="Limpar busca">
+        ✕
+      </button>
+    </div>
+    
+    <div class="page-size-selector">
+      <label for="pageSize">Itens por página:</label>
+      <select 
+        id="pageSize" 
+        [(ngModel)]="pageSize" 
+        (change)="onPageSizeChange(pageSize)"
+        class="page-size-select">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="genres-content">
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      <span class="error-icon">⚠️</span>
+      <span>{{ error }}</span>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <div class="spinner">⏳</div>
+      <p>Carregando gêneros...</p>
+    </div>
+
+    <div *ngIf="!loading" class="table-container">
+      <table class="genres-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Criado em</th>
+            <th>Atualizado em</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let genre of genres" class="genre-row">
+            <td class="genre-id">#{{ genre.id }}</td>
+            <td class="genre-name">{{ genre.name }}</td>
+            <td class="genre-created">{{ formatDate(genre.createdAt) }}</td>
+            <td class="genre-updated">{{ formatDate(genre.updatedAt) }}</td>
+            <td class="genre-actions">
+              <button class="edit-btn" [routerLink]="['edit', genre.id]" title="Editar gênero">
+                ✏️ Editar
+              </button>
+              <button class="delete-btn" (click)="deleteGenre(genre)" title="Excluir gênero">
+                🗑️ Excluir
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="genres.length === 0 && !loading && !error" class="empty-state">
+        <div class="empty-icon">🏷️</div>
+        <h3>Nenhum gênero encontrado</h3>
+        <p>Comece adicionando seu primeiro gênero à biblioteca</p>
+        <button class="add-btn" routerLink="create">Adicionar Primeiro Gênero</button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="pagination && !loading" class="pagination">
+      <div class="pagination-info">
+        <span class="results-count">
+          Mostrando {{ (pagination.number * pagination.size) + 1 }} - 
+          {{ (pagination.number + 1) * pagination.size > pagination.totalElements ? pagination.totalElements : (pagination.number + 1) * pagination.size }} 
+          de {{ pagination.totalElements }} gêneros
+        </span>
+      </div>
+      
+      <div class="pagination-controls">
+        <button 
+          class="page-btn" 
+          [disabled]="pagination.first"
+          (click)="onPageChange(pagination.number - 1)"
+          title="Página anterior">
+          ←
+        </button>
+        
+        <span class="page-info">
+          {{ pagination.number + 1 }} de {{ pagination.totalPages }}
+        </span>
+        
+        <button 
+          class="page-btn" 
+          [disabled]="pagination.last"
+          (click)="onPageChange(pagination.number + 1)"
+          title="Próxima página">
+          →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
